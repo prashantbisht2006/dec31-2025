@@ -10,8 +10,8 @@ const Header = () => {
   const pathname = usePathname();
 
   return (
-    <header className="header">
-      <div className="container header-wrapper">
+    <header>
+      <div className="main-container inner">
         {/* LEFT: LOGO */}
         <Link href="/">
           <Image
@@ -24,7 +24,7 @@ const Header = () => {
         </Link>
 
         {/* RIGHT: NAV */}
-        <nav className="nav-list">
+        <nav>
           <Link
             href="/"
             className={cn("nav-link", {
@@ -35,7 +35,7 @@ const Header = () => {
             Home
           </Link>
 
-          <p className="search-text">Search Modal</p>
+          <p>Search Modal</p>
 
           <Link
             href="/coins"
