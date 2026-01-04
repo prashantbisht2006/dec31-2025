@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
-import Image from 'next/image'
+import Image from 'next/image';
+import Data_Table from '@/components/Data_Table';
 
 const page = () => {
   return (
@@ -27,6 +28,7 @@ const page = () => {
         <p>Coin Overview</p>
 
         <p>Trending Coins</p>
+        <Data_Table columns={[{header:'coins'},{header:'price'}]}/>
       </section>
 
       <section className='w-full mt-7 space-y-4'>
