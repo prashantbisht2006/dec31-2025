@@ -93,6 +93,27 @@ const page = async () => {
   return (
     <main className='main-container'>
       <section className='home-grid'>
+           <div id='coin-overview'>
+          <div className='header'>
+            <img
+  src="https://coin-images.coingecko.com/coins/images/1/small/bitcoin.png"
+  alt="Bitcoin"
+  width={32}
+  height={32}
+/>
+<div className='info'>
+  <p>Bitcoin / BTC</p>
+  <h1>$80000</h1>
+
+</div>
+
+
+
+          </div>
+        </div>
+        <p>Coin Overview</p>
+
+        <p>Trending Coins</p>
         <Data_Table
           columns={columns}
           data={dummyData}
