@@ -1,11 +1,12 @@
-import React from 'react'
-import { Button } from '@/components/ui/button'
+import React from 'react';
+import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Data_Table from '@/components/Data_Table';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { TrendingUp,TrendingDown } from 'lucide-react';
 
+import { cn } from '@/lib/utils';
+import { TrendingUp, TrendingDown } from 'lucide-react';
+import { fetcher } from '@/lib/coingecko.actions';
+import Link from 'next/link';
 
 const dummyData = [
   {
@@ -34,22 +35,7 @@ const dummyData = [
       },
     },
   },
-  {
-    item: {
-      id: 'solana',
-      name: 'Solana',
-      large: 'https://coin-images.coingecko.com/coins/images/4128/large/solana.png',
-      data: {
-        price: 185,
-      },
-      data_price_change_percentage_24h: {
-        usd: 4.87,
-      },
-    },
-  },
 ];
-
-
 
 const columns = [
   {
@@ -65,11 +51,13 @@ const columns = [
       );
     },
   },
+
   {
     header: '24h Change',
     cellClassName: 'name-cell',
     cell: (coin) => {
       const item = coin.item;
+
       const isTrendingUp =
         item.data_price_change_percentage_24h.usd > 0;
 
@@ -80,63 +68,40 @@ const columns = [
             isTrendingUp ? 'text-green-500' : 'text-red-500'
           )}
         >
-          <p>
-            {
-              isTrendingUp ? (<TrendingUp width={16} height={16}/>):
-              (<TrendingDown width={16} height={16}/>)
-            }
-          </p>
+          {isTrendingUp ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
         </div>
       );
     },
   },
+
   {
-    header:'Price',
-    cellClassName:'price-cell',
-    cell:(coin)=>coin.item.data.price
-  }
+    header: 'Price',
+    cellClassName: 'price-cell',
+    cell: (coin) => coin.item.data.price,
+  },
 ];
 
+const page = async () => {
 
-const page = () => {
+  // 👉 NO LEADING SLASH
+  const coin = await fetcher('coins/bitcoin', {
+    dex_pair_format: 'symbol'
+  });
+
+  console.log(coin);
+
   return (
     <main className='main-container'>
       <section className='home-grid'>
-        <div id='coin-overview'>
-          <div className='header'>
-            <img
-  src="https://coin-images.coingecko.com/coins/images/1/small/bitcoin.png"
-  alt="Bitcoin"
-  width={32}
-  height={32}
-/>
-<div className='info'>
-  <p>Bitcoin / BTC</p>
-  <h1>$80000</h1>
-
-</div>
-
-
-
-          </div>
-        </div>
-        <p>Coin Overview</p>
-
-        <p>Trending Coins</p>
-        <Data_Table 
-  columns={columns}
-  data={dummyData}
-  rowKey={(coin) => coin.item.id}
-  tableClassname='trending-coins-table'
-/>
-
-      </section>
-
-      <section className='w-full mt-7 space-y-4'>
-        <p>Categories</p>
+        <Data_Table
+          columns={columns}
+          data={dummyData}
+          rowKey={(coin) => coin.item.id}
+          tableClassname='trending-coins-table'
+        />
       </section>
     </main>
-  )
-}
+  );
+};
 
-export default page
+export default page;
