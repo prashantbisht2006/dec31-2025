@@ -5,11 +5,16 @@ import Data_Table from "@/components/Data_Table";
 import { cn, formatCurrency, formatPercentage } from "@/lib/utils";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { fetcher } from "@/lib/coingecko.actions";
+import { TrendingCoinsFallback } from "./Fallback";
 import Link from "next/link";
 
-
 const Trendingcoin = async () => {
-  const trendingcoin = await fetcher("search/trending", undefined, 300);
+  let trendingcoin;
+  try{ trendingcoin = await fetcher("search/trending", undefined, 300);}
+  catch (error) {
+      console.error('Error fetching trending coins:', error);
+      return <TrendingCoinsFallback />;
+    }
   const columns = [
     {
       header: "Name",
@@ -31,8 +36,7 @@ const Trendingcoin = async () => {
       cell: (coin) => {
         const item = coin.item;
 
-        const isTrendingUp = item.data.price_change_percentage_24h?.usd
- > 0;
+        const isTrendingUp = item.data.price_change_percentage_24h?.usd > 0;
 
         return (
           <div
@@ -42,12 +46,14 @@ const Trendingcoin = async () => {
             )}
           >
             <p className="flex items-center">
-            {formatPercentage(item.data.price_change_percentage_24h?.usd || 0)}
-            {isTrendingUp ? (
-              <TrendingUp size={16} />
-            ) : (
-              <TrendingDown size={16} />
-            )}
+              {formatPercentage(
+                item.data.price_change_percentage_24h?.usd || 0
+              )}
+              {isTrendingUp ? (
+                <TrendingUp size={16} />
+              ) : (
+                <TrendingDown size={16} />
+              )}
             </p>
           </div>
         );
@@ -62,18 +68,17 @@ const Trendingcoin = async () => {
   ];
 
   return (
-    <div id='trending-coins'>
+    <div id="trending-coins">
       <h4>Trending Coins</h4>
-      <div id="trending-coins">
-        <Data_Table
-          columns={columns}
-          data={trendingcoin.coins.slice(0,6) || []}
-          rowKey={(coin) => coin.item.id}
-          tableClassname="trending-coins-table"
-          headerCellClassName="py-3!"
-          bodyCellClassName="py-2!"
-        />
-      </div>
+
+      <Data_Table
+        columns={columns}
+        data={trendingcoin.coins.slice(0, 6) || []}
+        rowKey={(coin) => coin.item.id}
+        tableClassname="trending-coins-table"
+        headerCellClassName="py-3!"
+        bodyCellClassName="py-2!"
+      />
     </div>
   );
 };

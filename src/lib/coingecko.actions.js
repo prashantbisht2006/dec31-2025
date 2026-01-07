@@ -26,7 +26,7 @@ export async function fetcher(
 
   const response = await fetch(url, {
     headers: {
-      // 👉 DEMO KEY HEADER AS PER DOC
+      
       'x-cg-demo-api-key': API_KEY,
       'Content-Type': 'application/json',
     },
