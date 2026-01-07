@@ -3,8 +3,7 @@ import qs from 'query-string';
 
 const BASE_URL = process.env.COINGECKO_BASE_URL;
 const API_KEY = process.env.COINGECKO_API_KEY;
-console.log("KEY ON SERVER:", API_KEY);
-console.log("base url=", BASE_URL);
+
 
 
 if (!BASE_URL) throw new Error('Could not get base url');

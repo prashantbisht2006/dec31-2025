@@ -8,11 +8,11 @@ import CandlestickCharts from "../CandlestickCharts";
 const CoinOverview = async () => {
   try {
     const [coin, coinOHLCdata] = await Promise.all([
-      fetcher("coins/bitcoin", {
+      await fetcher("coins/bitcoin", {
         dex_pair_format: "symbol",
       }),
 
-      fetcher("coins/bitcoin/ohlc", {
+      await fetcher("coins/bitcoin/ohlc", {
         vs_currency: "usd",
         days: 1,
         // interval: "hourly",

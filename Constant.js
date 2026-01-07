@@ -1,25 +1,11 @@
-import {
-  CandlestickSeriesPartialOptions,
-  ChartOptions,
-  ColorType,
-  DeepPartial,
-} from 'lightweight-charts';
-
+// constants & navigation
 export const navItems = [
-  {
-    label: 'Home',
-    href: '/',
-  },
-  {
-    label: 'Search',
-    href: '/',
-  },
-  {
-    label: 'All Coins',
-    href: '/coins',
-  },
+  { label: 'Home', href: '/' },
+  { label: 'Search', href: '/' },
+  { label: 'All Coins', href: '/coins' },
 ];
 
+// color palette
 const CHART_COLORS = {
   background: '#0b1116',
   text: '#8f9fb1',
@@ -29,7 +15,7 @@ const CHART_COLORS = {
   crosshairHorizontal: '#ffffff20',
   candleUp: '#158A6E',
   candleDown: '#EB1C36',
-} ;
+};
 
 export const getCandlestickConfig = () => ({
   upColor: CHART_COLORS.candleUp,
@@ -40,18 +26,17 @@ export const getCandlestickConfig = () => ({
   wickVisible: true,
 });
 
-export const getChartConfig = (
-  height,
-  timeVisible = true,
-) => ({
+export const getChartConfig = (height, timeVisible = true) => ({
   width: 0,
   height,
+
   layout: {
-    background: { type: ColorType.Solid, color: CHART_COLORS.background },
+    background: { type: 'solid', color: CHART_COLORS.background },
     textColor: CHART_COLORS.text,
     fontSize: 12,
     fontFamily: 'Inter, Roboto, "Helvetica Neue", Arial',
   },
+
   grid: {
     vertLines: { visible: false },
     horzLines: {
@@ -60,16 +45,20 @@ export const getChartConfig = (
       style: 2,
     },
   },
+
   rightPriceScale: {
     borderColor: CHART_COLORS.border,
   },
+
   timeScale: {
     borderColor: CHART_COLORS.border,
     timeVisible,
     secondsVisible: false,
   },
+
   handleScroll: true,
   handleScale: true,
+
   crosshair: {
     mode: 1,
     vertLine: {
@@ -85,12 +74,14 @@ export const getChartConfig = (
       style: 0,
     },
   },
+
   localization: {
-    priceFormatter: (price) =>
+    priceFormatter: price =>
       '$' + price.toLocaleString(undefined, { maximumFractionDigits: 2 }),
   },
 });
 
+// period handling
 export const PERIOD_CONFIG = {
   daily: { days: 1, interval: 'hourly' },
   weekly: { days: 7, interval: 'hourly' },
@@ -98,10 +89,10 @@ export const PERIOD_CONFIG = {
   '3months': { days: 90, interval: 'daily' },
   '6months': { days: 180, interval: 'daily' },
   yearly: { days: 365 },
-  max: { days: 'max' },
+  max: { days: 'max', interval: 'daily' },
 };
 
-export const PERIOD_BUTTONS= [
+export const PERIOD_BUTTONS = [
   { value: 'daily', label: '1D' },
   { value: 'weekly', label: '1W' },
   { value: 'monthly', label: '1M' },
