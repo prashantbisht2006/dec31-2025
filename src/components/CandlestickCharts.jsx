@@ -1,74 +1,148 @@
 "use client";
-import React, { useEffect, useRef, useState, useTransition } from "react";
-import { getChartConfig, PERIOD_BUTTONS, PERIOD_CONFIG,getCandlestickConfig } from "../../Constant";
-import { convertOHLCData } from "@/lib/utils";
+
+import { useEffect, useRef, useState, useTransition } from "react";
+import {
+  getCandlestickConfig,
+  getChartConfig,
+  PERIOD_BUTTONS,
+  PERIOD_CONFIG,
+} from "../../Constant";
+import { createChart, CandlestickSeries } from "lightweight-charts";
 import { fetcher } from "@/lib/coingecko.actions";
-import { createChart } from "lightweight-charts";
-import { CandlestickSeries } from "lightweight-charts";
+import { convertOHLCData } from "@/lib/utils";
 
 const CandlestickCharts = ({
   children,
   data,
   coinId,
   height = 360,
-  initialPeriod = "daily",
+  initialPeriod = "daily", // 🔧 FIX 1: must match PERIOD_CONFIG keys
 }) => {
+  /* ===================== REFS ===================== */
   const chartContainerRef = useRef(null);
-  const chartAPI = useRef < import("lightweight-charts").IChartApi > null;
-  const candleSeriesRef =
-    useRef < import("lightweight-charts").ISeriesApi > null;
+  const chartRef = useRef(null);
+  const candleSeriesRef = useRef(null);
+  const prevOhlcLengthRef = useRef(data?.length || 0);
+
+  /* ===================== STATE ===================== */
   const [period, setPeriod] = useState(initialPeriod);
-  const [loading, setLoading] = useState(false);
   const [ohlcData, setOhlcData] = useState(data ?? []);
   const [isPending, startTransition] = useTransition();
 
-  const fetchOHLCData = async (coinId, selectedPeriod = "daily") => {
+  /* ===================== FETCH OHLC DATA ===================== */
+  const fetchOHLCData = async (selectedPeriod) => {
     try {
-      // get config from your constant file
       const config = PERIOD_CONFIG[selectedPeriod];
+      if (!config) return;
 
-      const days = config?.days || 1;
-      const interval = config?.interval || "daily";
+      console.log("Selected period:", selectedPeriod);
+      console.log("Days:", config.days);
 
+      // ✅ CoinGecko OHLC supports ONLY days
       const newData = await fetcher(`/coins/${coinId}/ohlc`, {
         vs_currency: "usd",
-        days,
-        interval,
-        precision: "full",
+        days: config.days,
       });
-      setOhlcData(newData ?? []);
+
+      startTransition(() => {
+        setOhlcData(newData ?? []);
+      });
     } catch (e) {
       console.error("Failed to fetch OHLC data:", e);
-
-      return [];
     }
   };
 
-  const HandlePeriodChange = (newPeriod) => {
+  /* ===================== PERIOD CHANGE ===================== */
+  const handlePeriodChange = (newPeriod) => {
     if (newPeriod === period) return;
-
-    startTransition(async () => {
-      setPeriod(newPeriod);
-      await fetchOHLCData(newPeriod);
-    });
-
-    /////////////
+    setPeriod(newPeriod);
+    fetchOHLCData(newPeriod);
   };
+
+  /* ===================== CREATE CHART (ONCE) ===================== */
   useEffect(() => {
     const container = chartContainerRef.current;
     if (!container) return;
+
     const showTime = ["daily", "weekly", "monthly"].includes(period);
 
     const chart = createChart(container, {
       ...getChartConfig(height, showTime),
-      width: container.clientwidth,
+      width: container.clientWidth,
     });
-    const series = chart.addSeries(CandlestickSeries, getCandlestickConfig());
 
-    series.setData(convertOHLCData(ohlcData));
-    chart.timeScale().fitContent();
+    const series = chart.addSeries(
+      CandlestickSeries,
+      getCandlestickConfig()
+    );
+
+    chartRef.current = chart;
+    candleSeriesRef.current = series;
+
+    if (ohlcData.length) {
+      const converted = convertOHLCData(
+        ohlcData.map((d) => [
+          Math.floor(d[0] / 1000),
+          d[1],
+          d[2],
+          d[3],
+          d[4],
+        ])
+      );
+      series.setData(converted);
+      chart.timeScale().fitContent();
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      if (!entries.length) return;
+      chart.applyOptions({ width: entries[0].contentRect.width });
+    });
+
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+      chart.remove();
+    };
   }, [height]);
 
+  /* ===================== UPDATE DATA ===================== */
+  useEffect(() => {
+    if (!candleSeriesRef.current || !ohlcData.length) return;
+
+    const converted = convertOHLCData(
+      ohlcData.map((d) => [
+        Math.floor(d[0] / 1000),
+        d[1],
+        d[2],
+        d[3],
+        d[4],
+      ])
+    );
+
+    candleSeriesRef.current.setData(converted);
+
+    if (prevOhlcLengthRef.current !== ohlcData.length) {
+      chartRef.current?.timeScale().fitContent();
+      prevOhlcLengthRef.current = ohlcData.length;
+    }
+  }, [ohlcData]);
+
+  /* ===================== UPDATE TIME SCALE ===================== */
+  useEffect(() => {
+    if (!chartRef.current) return;
+
+    const showTime = ["daily", "weekly", "monthly"].includes(period);
+
+    chartRef.current.applyOptions({
+      timeScale: {
+        timeVisible: showTime,
+        secondsVisible: period === "daily",
+      },
+    });
+  }, [period]);
+
+  /* ===================== RENDER ===================== */
   return (
     <div id="candlestick-chart">
       <div className="chart-header">
@@ -78,20 +152,24 @@ const CandlestickCharts = ({
           <span className="text-sm mx-2 font-medium text-blue-100/60">
             Period:
           </span>
+
           {PERIOD_BUTTONS.map(({ value, label }) => (
             <button
               key={value}
               className={
-                period === value ? "config-buttton-active" : "config-button"
+                period === value
+                  ? "config-button-active"
+                  : "config-button"
               }
-              onClick={() => HandlePeriodChange(value)}
-              disabled={loading}
+              onClick={() => handlePeriodChange(value)}
+              disabled={isPending}
             >
               {label}
             </button>
           ))}
         </div>
       </div>
+
       <div ref={chartContainerRef} className="chart" style={{ height }} />
     </div>
   );

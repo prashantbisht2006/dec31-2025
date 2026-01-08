@@ -82,14 +82,16 @@ export const getChartConfig = (height, timeVisible = true) => ({
 });
 
 // period handling
+// constants.js
+// 🔧 CHANGED: PERIOD_CONFIG now compatible with market_chart API
 export const PERIOD_CONFIG = {
   daily: { days: 1, interval: 'hourly' },
   weekly: { days: 7, interval: 'hourly' },
   monthly: { days: 30, interval: 'hourly' },
   '3months': { days: 90, interval: 'daily' },
   '6months': { days: 180, interval: 'daily' },
-  yearly: { days: 365 },
-  max: { days: 'max', interval: 'daily' },
+  yearly: { days: 365, interval: 'daily' },
+  // max: { days: 'max', interval: 'daily' }, // ✅ VALID for market_chart
 };
 
 export const PERIOD_BUTTONS = [
@@ -99,8 +101,9 @@ export const PERIOD_BUTTONS = [
   { value: '3months', label: '3M' },
   { value: '6months', label: '6M' },
   { value: 'yearly', label: '1Y' },
-  { value: 'max', label: 'Max' },
+  // { value: 'yearly', label: 'Max' },
 ];
+
 
 export const LIVE_INTERVAL_BUTTONS = [
   { value: '1s', label: '1s' },
