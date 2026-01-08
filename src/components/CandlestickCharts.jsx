@@ -1,8 +1,10 @@
 "use client";
-import React, { useRef, useState } from "react";
-import { PERIOD_BUTTONS, PERIOD_CONFIG } from "../../Constant";
-
+import React, { useEffect, useRef, useState, useTransition } from "react";
+import { getChartConfig, PERIOD_BUTTONS, PERIOD_CONFIG,getCandlestickConfig } from "../../Constant";
+import { convertOHLCData } from "@/lib/utils";
 import { fetcher } from "@/lib/coingecko.actions";
+import { createChart } from "lightweight-charts";
+import { CandlestickSeries } from "lightweight-charts";
 
 const CandlestickCharts = ({
   children,
@@ -18,6 +20,7 @@ const CandlestickCharts = ({
   const [period, setPeriod] = useState(initialPeriod);
   const [loading, setLoading] = useState(false);
   const [ohlcData, setOhlcData] = useState(data ?? []);
+  const [isPending, startTransition] = useTransition();
 
   const fetchOHLCData = async (coinId, selectedPeriod = "daily") => {
     try {
@@ -33,8 +36,7 @@ const CandlestickCharts = ({
         interval,
         precision: "full",
       });
-
-      return newData || [];
+      setOhlcData(newData ?? []);
     } catch (e) {
       console.error("Failed to fetch OHLC data:", e);
 
@@ -45,10 +47,27 @@ const CandlestickCharts = ({
   const HandlePeriodChange = (newPeriod) => {
     if (newPeriod === period) return;
 
-    setPeriod(newPeriod);
+    startTransition(async () => {
+      setPeriod(newPeriod);
+      await fetchOHLCData(newPeriod);
+    });
 
     /////////////
   };
+  useEffect(() => {
+    const container = chartContainerRef.current;
+    if (!container) return;
+    const showTime = ["daily", "weekly", "monthly"].includes(period);
+
+    const chart = createChart(container, {
+      ...getChartConfig(height, showTime),
+      width: container.clientwidth,
+    });
+    const series = chart.addSeries(CandlestickSeries, getCandlestickConfig());
+
+    series.setData(convertOHLCData(ohlcData));
+    chart.timeScale().fitContent();
+  }, [height]);
 
   return (
     <div id="candlestick-chart">
