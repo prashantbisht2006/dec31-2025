@@ -100,7 +100,7 @@ export const PERIOD_BUTTONS = [
   { value: 'monthly', label: '1M' },
   { value: '3months', label: '3M' },
   { value: '6months', label: '6M' },
-  { value: 'yearly', label: '1Y' },
+  { value: 'yearly', label: 'Max' },
   // { value: 'yearly', label: 'Max' },
 ];
 
