@@ -5,9 +5,7 @@ import Image from "next/image";
 import { formatCurrency, formatPercentage } from "@/lib/utils";
 import { headers } from "next/headers";
 import { cn } from "@/lib/utils";
-import { TrendingUp, TrendingDown } from "lucide-react"; 
-
-
+import { TrendingUp, TrendingDown } from "lucide-react";
 
 const Categories = async () => {
   const categories = await fetcher("coins/categories");
@@ -31,32 +29,31 @@ const Categories = async () => {
       cell: (category) => formatCurrency(category.market_cap),
     },
     {
-  header: "24h Change",
-  cellClassName: "name-cell",
-  cell: (category) => {
-    const change = category.market_cap_change_24h ?? 0;
-    const isTrendingUp = change > 0;
+      header: "24h Change",
+      cellClassName: "name-cell",
+      cell: (category) => {
+        const change = category.market_cap_change_24h ?? 0;
+        const isTrendingUp = change > 0;
 
-    return (
-      <div
-        className={cn(
-          "change-cell000",
-          isTrendingUp ? "text-green-500" : "text-red-500"
-        )}
-      >
-        <p className="flex items-center">
-          {formatPercentage(change)}
-          {isTrendingUp ? (
-            <TrendingUp size={16} />
-          ) : (
-            <TrendingDown size={16} />
-          )}
-        </p>
-      </div>
-    );
-  },
-}
-,
+        return (
+          <div
+            className={cn(
+              "change-cell000",
+              isTrendingUp ? "text-green-500" : "text-red-500"
+            )}
+          >
+            <p className="flex items-center">
+              {formatPercentage(change)}
+              {isTrendingUp ? (
+                <TrendingUp size={16} />
+              ) : (
+                <TrendingDown size={16} />
+              )}
+            </p>
+          </div>
+        );
+      },
+    },
     {
       header: "24h Volume",
       cellClassName: "volume-cell",
