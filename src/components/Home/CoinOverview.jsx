@@ -5,6 +5,9 @@ import { formatCurrency } from "@/lib/utils";
 import { CoinOverviewFallback } from "./Fallback";
 import CandlestickCharts from "../CandlestickCharts";
 
+
+
+
 const CoinOverview = async () => {
   try {
     const [coin, coinOHLCdata] = await Promise.all([
