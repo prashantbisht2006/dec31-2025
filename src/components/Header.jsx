@@ -2,12 +2,22 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import React from "react";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils"; // adjust path if needed
+import React, { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 const Header = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && query.trim()) {
+      router.push(`/coins/${query.toLowerCase()}`);
+      setQuery("");
+    }
+  };
 
   return (
     <header>
@@ -23,19 +33,28 @@ const Header = () => {
           />
         </Link>
 
+        
+
         {/* RIGHT: NAV */}
         <nav>
           <Link
             href="/"
             className={cn("nav-link", {
               "is-active": pathname === "/",
-              "is-home": true,
             })}
           >
             Home
           </Link>
-
-          <p>Search Modal</p>
+          <div className="search-nav">
+          <Input
+            type="text"
+            placeholder="Search coin (e.g. bitcoin, ethereum)"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="search-input"
+          />
+        </div>
 
           <Link
             href="/coins"

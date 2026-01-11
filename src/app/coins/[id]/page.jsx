@@ -34,7 +34,7 @@ const Page = async ({ params }) => {
 
   const coinDetails = [
     {
-      lable: "Market-Cap",
+      lable: "Current-Price",
       value: formatCurrency(coinData.market_data.current_price.usd),
     },
     {
@@ -135,27 +135,50 @@ const Page = async ({ params }) => {
   return (
     
 <div>
-  {/* <section id="live-data-wrapper">
-
-  <Tradecolumn coin={coinData} />
-    </section> */}
+  
 
 
     <main id="coin-details-page">
       <section className="primary">
-        <CoinDetailLoader
+        <div id="coin-overview">
+          <div className="header ">
+            <Image
+              src={coinData.image.large}
+              alt={coinData.name}
+              width={32}
+              height={32}
+            />
+
+            <div className="info">
+              <p>
+                {coinData.name} / {coinData.symbol.toUpperCase()}
+              </p>
+
+              <h1>
+                {formatCurrency(coinData.market_data.current_price.usd)}
+              </h1>
+            </div>
+          </div>
+          <CoinDetailLoader
           coinId={id}
           coin={coinData}
           coinOHLCData={ohlcData}
         ></CoinDetailLoader>
+          
+        
+        
+      </div>
+        
       </section>
 
       <section className="secondary">
         <Converter
           symbol={coinData.symbol}
           icon={coinData.image.small}
-          priceList={coinData.market_data.current_price.usd}
+          priceList={coinData.market_data.current_price}
         />
+        
+
          <div className="details">
           <h4>Coin Details</h4>
 

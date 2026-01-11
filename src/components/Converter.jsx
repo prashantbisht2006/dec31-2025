@@ -43,11 +43,19 @@ const Converter = ({ symbol, icon, priceList }) => {
         <div className="divider">
           <div className="line" />
 
-          <Image src="/public/assets/icons/Exchange_Icon.svg" alt="converter" width={32} height={32} className="icon" />
-        </div>
+          <Image
+  src="/assets/icons/convert.svg"
+  alt="converter"
+  width={32}
+  height={32}
+  className="icon"
+/>
+ </div>
 
         <div className="output-wrapper">
           <p>{formatCurrency(convertedPrice, currency)}</p>
+          
+
 
 
           <Select value={currency} onValueChange={setCurrency}>

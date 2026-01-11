@@ -10,22 +10,7 @@ import Tradecolumn from './Tradecolumn';
  
 const CoinDetailLoader = ({coinId, coin,coinOHLCData}) => {
   const [liveInterval, setLiveInterval] = useState('1s');
-  // const trades = coin?.market_data
-  // ? [
-  //     {
-  //       price: coin.market_data.current_price.usd,
-  //       amount: coin.market_data.total_volume.usd / coin.market_data.current_price.usd,
-  //       market_cap: coin.market_data.market_cap.usd,
-  //       price_change_24h: coin.market_data.price_change_percentage_24h,
-  //       price_change_7d: coin.market_data.price_change_percentage_7d,
-  //     },
-  //   ]
-  // : [];
-
   
-   
-
-
    return(
     <section id="live-data-wrapper">
 {/* <CoinHeader
@@ -52,8 +37,6 @@ const CoinDetailLoader = ({coinId, coin,coinOHLCData}) => {
         </CandlestickCharts>
       </div>
       
-
-
 
        <Separator className="divider" />
        {coin && <Tradecolumn coin={coin} />}
