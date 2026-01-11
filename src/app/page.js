@@ -4,11 +4,8 @@ import { Suspense } from "react";
 import CoinOverview from "@/components/Home/CoinOverview";
 import Trendingcoin from "@/components/Home/Trendingcoin";
 import Categories from "@/components/Categories";
-import {
-  CategoriesFallback,
-  CoinOverviewFallback,
-  TrendingCoinsFallback,
-} from "@/components/home/Fallback";
+import { TrendingCoinsFallback,CoinOverviewFallback,CategoriesFallback } from "@/components/Home/Fallback";
+
 const page = async () => {
   return (
     <main className="main-container">

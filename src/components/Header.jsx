@@ -25,7 +25,7 @@ const Header = () => {
         {/* LEFT: LOGO */}
         <Link href="/">
           <Image
-            src="/assets/icons/logo.svg"
+            src="/assets/icons/logo.PNG"
             alt="crypto-up logo"
             width={132}
             height={40}

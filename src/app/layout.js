@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Stock-up",
+  title: "Coin-up",
   description: "stock price and trend visualizer",
 };
 
